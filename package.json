@@ -1,6 +1,6 @@
 {
   "name": "aba-generator",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "ABA file generator",
   "main": "index.js",
   "repository": "git@github.com:koresar/aba-generator.git",
