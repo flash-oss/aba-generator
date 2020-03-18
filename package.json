@@ -1,0 +1,33 @@
+{
+  "name": "aba-generator",
+  "version": "0.0.1",
+  "description": "ABA file generator",
+  "main": "index.js",
+  "repository": "git@github.com:koresar/aba-generator.git",
+  "license": "Apache-2",
+  "dependencies": {
+    "printf": "^0.5.3"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^6.8.0",
+    "mocha": "^7.1.0",
+    "moment": "^2.24.0",
+    "prettier": "^1.8.2"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test": "mocha"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 2018
+    },
+    "env": {
+      "es6": true,
+      "node": true,
+      "mocha": true
+    },
+    "extends": "eslint:recommended"
+  }
+}
