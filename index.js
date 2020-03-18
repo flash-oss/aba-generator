@@ -70,6 +70,9 @@ class ABA {
         this.options = { ...ABA.HEADER_DEFAULTS, ...options };
     }
 
+    /**
+     * @private
+     */
     formatTransaction(transaction) {
         return printf(PAYMENT_FORMAT, {
             ...transaction,
@@ -81,21 +84,30 @@ class ABA {
         });
     }
 
+    /**
+     * @private
+     */
     formatHeader() {
         const time = new Date(this.options.time || this.options.date || new Date());
 
         return printf(HEADER_FORMAT, {
             ...this.options,
-            date: pad2(time.getDate()) + pad2(time.getMonth() + 1) + pad2(time.getFullYear() % 100),
+            date: pad2(time.getDate()) + pad2(time.getMonth() + 1) + pad2(time.getFullYear() % 100), // DDMMYY
             bsb: formatBsb(this.options.bsb),
-            time: this.options.time ? pad2(time.getHours()) + pad2(time.getMinutes()) : ""
+            time: this.options.time ? pad2(time.getHours()) + pad2(time.getMinutes()) : "" // HHmm
         });
     }
 
+    /**
+     * @private
+     */
     formatFooter(transactions) {
         return printf(FOOTER_FORMAT, this._getFooter(transactions));
     }
 
+    /**
+     * @private
+     */
     _getFooter(transactions) {
         const credits = transactions.filter(p => p.transactionCode === ABA.CREDIT);
         const debits = transactions.filter(p => p.transactionCode === ABA.DEBIT);

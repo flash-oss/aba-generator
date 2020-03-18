@@ -10,29 +10,38 @@ Installation
 npm i -S aba-generator
 ```
 
-Example
+Minimal example of sending money from your account:
 
 ```js
 const ABA = require("aba-generator");
 
 const aba = new ABA({
-    bank: "ANZ",
-    user: "Allowasa Pertolio Accounting&Tax",
-    userNumber: 1234,
-    description: "Creditors Of The Wooloomooloo"
+  bank: "ANZ", // The bank processing this file
+  user: "Allowasa Pertolio Accounting&Tax", // Your (money sender) company name
+  userNumber: 1234, // Your ID in the bank system, often hardcoded to some number. Consult with your bank
+  description: "Credits Of The Wooloomooloo" // Description of the transactions within the file
+
+// Optional
+// bsb: String, // Main account BSB. Not in the ABA spec, but required by ANZ
+// account: String, // Main account number. Not in the ABA spec, but required by ANZ
+// date: Date|String|Number, // The date to be processed, default is now
+// time: Date|String|Number, // The time to be processed. Not in the ABA spec, but required by ANZ
 });
 
 const transaction = {
-    bsb: "061021",
-    transactionCode: ABA.DEBIT,
-    account: "123456",
-    amount: 12.0,
-    accountTitle: "Georgian Council of New South Wales",
-    reference: "1234",
-    traceBsb: "061123",
-    traceAccount: "1234567",
-    remitter: "1235",
-    taxAmount: 12
+  bsb: "061021", // recipient's account BSB
+  transactionCode: ABA.CREDIT, // indicates "you are sending money (debit), they are receiving (credit)"
+  account: "123456", // recipient's account number
+  amount: 12.0, // Number|String sending amount the recipient will see in their bank account
+  accountTitle: "Georgian Council of New South Wales", // recipient account name
+  reference: "Invoice # 1234", // payment reference, will be visible to the recipient
+  traceBsb: "061123", // your (sender) bank account BSB
+  traceAccount: "1234567", // your (sender) bank account number
+  remitter: "Acme Inc" // Your (sender) company name
+  
+// Optional
+// tax: "N"|"W"|"X"|"Y"|" "|"", // Tax withholding indicator. Typically blank, meaning no tax. See ABA specification.
+// taxAmount: Number|String, // Tax amount. Typically 0.
 };
 
 const file = aba.generate([transaction]);
@@ -43,9 +52,9 @@ console.log(file);
 Should print:
 
 ```
-0                 01ANZ       Allowasa Pertolio Accounti001234Creditors Of180320
-1061-021   123456 130000001200Georgian Council of New South Wa1234              061-123  12345671235            00001200
-7999-999            000000120000000000000000001200                        000001
+0                 01ANZ       Allowasa Pertolio Accounti001234Credits Of T180320                                        
+1061-021   123456 500000001200Georgian Council of New South WaInvoice # 1234    061-123  1234567Acme Inc        00000000
+7999-999            000000120000000012000000000000                        000001                                        
 ```
 
 which is a fully valid ABA file. (There should be spaces in the end of the first and last rows, but are not rendered in Markdown).
@@ -100,3 +109,13 @@ Transactions schema. Most of the params are required as yo ucan see.
  * @param [transactions[].taxAmount=0] {Number}
  * @return {String} The ABA file contents as a string.
 ```
+
+# TODO
+
+* Input data validation
+
+# Credits
+
+The module is based on this excellent work: https://github.com/ordermentum/aba
+
+Changes: removed `Bignumber.js` and `moment` dependencies, added documentation and examples, simplified code infrastructure, fixed few bugs, implement max length limit of variable data fields.
