@@ -19,6 +19,9 @@
     "lint": "eslint .",
     "test": "mocha"
   },
+  "files": [
+    "index.js"
+  ],
   "eslintConfig": {
     "parserOptions": {
       "ecmaVersion": 2018
