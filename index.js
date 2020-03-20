@@ -147,8 +147,7 @@ class ABA {
             throw new Error("Please pass in at least one payment");
         }
         const formatted = transactions.map(payment => this.formatTransaction({ ...ABA.PAYMENT_DEFAULTS, ...payment }));
-        const footer = this.formatFooter(transactions);
-        return [this.formatHeader(), ...formatted, footer].join("\r\n");
+        return [this.formatHeader(), ...formatted, this.formatFooter(transactions)].join("\r\n");
     }
 }
 

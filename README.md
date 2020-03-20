@@ -2,6 +2,12 @@
 
 Generate ABA Files from Node.js
 
+Notable:
+
+* The minified version of this module is 2.4KB.
+* The only dependency is [printf](https://www.npmjs.com/package/printf), which can be minified to 8.2KB
+* The source code of `aba-generator` is quite easy to read, understand, and amend. We welcome any changes. 
+
 ## Usage
 
 Installation

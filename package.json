@@ -5,6 +5,18 @@
   "main": "index.js",
   "repository": "git@github.com:koresar/aba-generator.git",
   "license": "Apache-2",
+  "keywords": [
+    "ABA",
+    "generator",
+    "generate",
+    "Australia",
+    "Australian",
+    "Bank",
+    "file",
+    "format",
+    "payment",
+    "transaction"
+  ],
   "dependencies": {
     "printf": "^0.5.3"
   },
