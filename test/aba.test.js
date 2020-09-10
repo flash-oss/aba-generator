@@ -36,7 +36,6 @@ describe("ABA", () => {
                 account: "123456",
                 amount: 12.0,
                 accountTitle: "Ukrainian Council of New South Wales",
-                reference: "1234",
                 traceBsb: "061123",
                 traceAccount: "1234567",
                 remitter: "1235",

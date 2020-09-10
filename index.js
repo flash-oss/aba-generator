@@ -76,6 +76,7 @@ class ABA {
     formatTransaction(transaction) {
         return printf(PAYMENT_FORMAT, {
             ...transaction,
+            reference: transaction.reference == null ? "" : String(transaction.reference),
             amount: toCents(transaction.amount),
             bsb: formatBsb(transaction.bsb),
             account: transaction.account.trim(),
@@ -134,7 +135,7 @@ class ABA {
      * @param transactions[].account {String} The third party account number
      * @param transactions[].amount {String|Number}
      * @param transactions[].accountTitle {String} The third party (recipient) account name. Up to 32 chars.
-     * @param transactions[].reference {String} Payment reference, e.g. "Invoice # 123". Up to 18 chars.
+     * @param [transactions[].reference] {String} Payment reference, e.g. "Invoice # 123". Up to 18 chars.
      * @param transactions[].traceBsb {String} The transacting account BSB
      * @param transactions[].traceAccount {String} The transacting account number
      * @param transactions[].remitter {String} The transacting company name.
