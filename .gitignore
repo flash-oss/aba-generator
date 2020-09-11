@@ -60,3 +60,4 @@ typings/
 .idea
 .npmrc
 .DS_Store
+package-lock.json

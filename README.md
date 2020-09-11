@@ -1,6 +1,6 @@
 # ABA generator
 
-Generate ABA Files from Node.js
+Generate ABA Files from Node.js and browser.
 
 Notable:
 
@@ -63,13 +63,13 @@ Should print:
 7999-999            000000120000000012000000000000                        000001                                        
 ```
 
-which is a fully valid ABA file. (There should be spaces in the end of the first and last rows, but are not rendered in Markdown).
+which is a fully valid ABA file. Note spaces in the end of the first and last lines.
 
 Every line in the ABA file must be 120 chars. So data like `user`, `description`, `accountTitle`, etc are truncated if too long.
 
 ## Note
 
-Even though the format is standardised, bank typically mandate some of the fields to be hardcoded.
+Even though the format is standardised, banks typically mandate some fields to be hardcoded.
 
 ## ABA file specification
 
@@ -97,7 +97,7 @@ Constructor options:
 
 ### .generate(transactions)
 
-Transactions schema. Most of the params are required as yo ucan see.
+Transactions schema. Most of the params are required as you can see.
 
 ```
  * Generate ABA file of these transactions.
