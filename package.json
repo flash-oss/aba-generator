@@ -1,6 +1,6 @@
 {
   "name": "aba-generator",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "ABA file generator",
   "main": "index.js",
   "repository": "git@github.com:flash-oss/aba-generator.git",
