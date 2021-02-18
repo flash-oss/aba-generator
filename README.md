@@ -36,7 +36,8 @@ const aba = new ABA({
 
 const transaction = {
   bsb: "061021", // recipient's account BSB
-  transactionCode: ABA.CREDIT, // indicates "you are sending money (debit), they are receiving (credit)"
+  transactionCode: ABA.CREDIT, 
+        // indicates "you are sending money (debit), they are receiving (credit)". ABA.PAY works in the same way but with code 53 
   account: "123456", // recipient's account number
   amount: 12.0, // Number|String sending amount the recipient will see in their bank account
   accountTitle: "Georgian Council of New South Wales", // recipient account name
@@ -104,7 +105,7 @@ Transactions schema. Most of the params are required as you can see.
  * @param transactions {Object[]} Transactions in the file
  * @param transactions[].bsb {String} The third party account BSB
  * @param [transactions[].tax=" "] {"N"|"W"|"X"|"Y"|" "|""}
- * @param transactions[].transactionCode {Number|ABA.CREDIT|ABA.DEBIT} Debit or credit? ABA.CREDIT or ABA.DEBIT
+ * @param transactions[].transactionCode {Number|ABA.CREDIT|ABA.DEBIT|ABA.PAY} Debit or credit? ABA.CREDIT or ABA.DEBIT or ABA.PAY
  * @param transactions[].account {String} The third party account number
  * @param transactions[].amount {String|Number}
  * @param transactions[].accountTitle {String} The third party (recipient) account name. Up to 32 chars.
