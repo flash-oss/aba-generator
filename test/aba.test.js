@@ -277,12 +277,13 @@ describe("ABA", () => {
             });
 
             const payments = [
-                { ...PAYMENT, transactionCode: ABA.CREDIT, amount: 666.66 },
+                { ...PAYMENT, transactionCode: ABA.CREDIT, amount: 111.11 },
+                { ...PAYMENT, transactionCode: ABA.PAY, amount: 555.55 },
                 { ...PAYMENT, transactionCode: ABA.DEBIT, amount: 1337.42 }
             ];
 
             const footer = aba._getFooter(payments);
-            expect(footer.length).to.equal(2);
+            expect(footer.length).to.equal(3);
             expect(footer.credit).to.equal("66666");
             expect(footer.debit).to.equal("133742");
             expect(footer.net).to.equal("67076");
@@ -294,7 +295,7 @@ describe("ABA", () => {
             ].join("");
 
             const rows = aba.generate(payments).split(/\r\n/);
-            expect(rows[3].substr(20, 30)).to.equal(result);
+            expect(rows[4].substr(20, 30)).to.equal(result);
         });
     });
 });
