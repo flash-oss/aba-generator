@@ -110,7 +110,7 @@ class ABA {
      * @private
      */
     _getFooter(transactions) {
-        const credits = transactions.filter(p => p.transactionCode === ABA.CREDIT);
+        const credits = transactions.filter(p => (p.transactionCode === ABA.CREDIT || p.transactionCode === ABA.PAY));
         const debits = transactions.filter(p => p.transactionCode === ABA.DEBIT);
         const credit = sum(credits.map(c => c.amount));
         const debit = sum(debits.map(d => d.amount));
@@ -159,7 +159,7 @@ ABA.PAYMENT_DEFAULTS = {
 
 ABA.CREDIT = 50;
 ABA.DEBIT = 13;
-
+ABA.PAY = 53;
 ABA.HEADER_DEFAULTS = {
     bsb: "",
     account: "",
