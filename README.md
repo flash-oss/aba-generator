@@ -76,6 +76,7 @@ Even though the format is standardised, banks typically mandate some fields to b
 
 1. http://ddkonline.blogspot.com/2009/01/aba-bank-payment-file-format-australian.html
 1. https://www.cemtexaba.com/aba-format/cemtex-aba-file-format-details
+1. https://github.com/mjec/aba/blob/master/sample-with-comments.aba
 
 ## API
 
