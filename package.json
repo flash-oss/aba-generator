@@ -3,6 +3,7 @@
   "version": "1.1.0",
   "description": "ABA file generator",
   "main": "index.js",
+  "types": "./index.d.ts",
   "repository": "git@github.com:flash-oss/aba-generator.git",
   "license": "Apache-2",
   "keywords": [
