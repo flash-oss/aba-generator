@@ -1,11 +1,11 @@
 const printf = require("printf");
 
 const toCents = (number = 0) => (Number(number) * 100).toFixed(0);
-const sum = totals => totals.reduce((p, v) => p + v, 0).toFixed(2);
+const sum = (totals) => totals.reduce((p, v) => p + v, 0).toFixed(2);
 const difference = (credit, debit) => Math.abs(credit - debit).toFixed(2);
-const pad2 = any => printf("%02d", any);
+const pad2 = (any) => printf("%02d", any);
 
-const formatBsb = bsb => {
+const formatBsb = (bsb) => {
     const value = bsb.replace(/(\s|-)+/, "").trim();
     return value ? `${value.slice(0, 3)}-${value.slice(3, 6)}` : "";
 };
@@ -22,7 +22,7 @@ const PAYMENT_FORMAT = [
     "%(traceBsb)7s",
     "%(traceAccount)9s",
     "%(remitter)-16.16s",
-    "%(taxAmount)08d"
+    "%(taxAmount)08d",
 ].join("");
 
 const HEADER_FORMAT = [
@@ -38,7 +38,7 @@ const HEADER_FORMAT = [
     "%(description)-12.12s",
     "%(date)6s",
     "%(time)4s",
-    " ".repeat(36)
+    " ".repeat(36),
 ].join("");
 
 const FOOTER_FORMAT = [
@@ -50,7 +50,7 @@ const FOOTER_FORMAT = [
     "%(debit)010d",
     " ".repeat(24),
     "%(length)06d",
-    " ".repeat(40)
+    " ".repeat(40),
 ].join("");
 
 class ABA {
@@ -81,7 +81,7 @@ class ABA {
             bsb: formatBsb(transaction.bsb),
             account: transaction.account.trim(),
             traceBsb: formatBsb(transaction.traceBsb),
-            taxAmount: toCents(transaction.taxAmount)
+            taxAmount: toCents(transaction.taxAmount),
         });
     }
 
@@ -95,7 +95,7 @@ class ABA {
             ...this.options,
             date: pad2(time.getDate()) + pad2(time.getMonth() + 1) + pad2(time.getFullYear() % 100), // DDMMYY
             bsb: formatBsb(this.options.bsb),
-            time: this.options.time ? pad2(time.getHours()) + pad2(time.getMinutes()) : "" // HHmm
+            time: this.options.time ? pad2(time.getHours()) + pad2(time.getMinutes()) : "", // HHmm
         });
     }
 
@@ -110,10 +110,10 @@ class ABA {
      * @private
      */
     _getFooter(transactions) {
-        const credits = transactions.filter(p => (p.transactionCode === ABA.CREDIT || p.transactionCode === ABA.PAY));
-        const debits = transactions.filter(p => p.transactionCode === ABA.DEBIT);
-        const credit = sum(credits.map(c => c.amount));
-        const debit = sum(debits.map(d => d.amount));
+        const credits = transactions.filter((p) => p.transactionCode === ABA.CREDIT || p.transactionCode === ABA.PAY);
+        const debits = transactions.filter((p) => p.transactionCode === ABA.DEBIT);
+        const credit = sum(credits.map((c) => c.amount));
+        const debit = sum(debits.map((d) => d.amount));
 
         return {
             // According to spec the net total was supposed to be an unsigned value of
@@ -122,7 +122,7 @@ class ABA {
             net: toCents(difference(credit, debit)),
             credit: toCents(credit),
             debit: toCents(debit),
-            length: transactions.length
+            length: transactions.length,
         };
     }
 
@@ -147,14 +147,16 @@ class ABA {
         if (!transactions.length) {
             throw new Error("Please pass in at least one payment");
         }
-        const formatted = transactions.map(payment => this.formatTransaction({ ...ABA.PAYMENT_DEFAULTS, ...payment }));
+        const formatted = transactions.map((payment) =>
+            this.formatTransaction({ ...ABA.PAYMENT_DEFAULTS, ...payment })
+        );
         return [this.formatHeader(), ...formatted, this.formatFooter(transactions)].join("\r\n");
     }
 }
 
 ABA.PAYMENT_DEFAULTS = {
     tax: "",
-    taxAmount: 0
+    taxAmount: 0,
 };
 
 ABA.CREDIT = 50;
@@ -164,7 +166,7 @@ ABA.HEADER_DEFAULTS = {
     bsb: "",
     account: "",
     description: "",
-    time: ""
+    time: "",
 };
 
 module.exports = ABA;
