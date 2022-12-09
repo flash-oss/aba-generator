@@ -25,7 +25,7 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "test": "node --test test/*.test.js"
+    "test": "node test/*.test.js"
   },
   "files": [
     "index.js",
