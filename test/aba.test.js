@@ -1,6 +1,6 @@
 const moment = require("moment");
-const assert = require("node:assert")
-const test = require("node:test")
+const assert = require("node:assert");
+const { describe, it } = require("node:test");
 
 const ABA = require("../");
 
@@ -13,23 +13,23 @@ const PAYMENT = {
     reference: "Order 132",
     traceBsb: "013-666",
     traceAccount: "567890",
-    remitter: "Vault"
+    remitter: "Vault",
 };
 
-test("ABA", () => {
-    test("class", async (t) => {
-        await t.test("throws error on empty data", () => {
+describe("ABA", () => {
+    describe("class", () => {
+        it("throws error on empty data", () => {
             const aba = new ABA();
-            assert.throws(() => aba.generate([]))
+            assert.throws(() => aba.generate([]));
         });
 
-        await t.test("generates file", () => {
+        it("generates file", () => {
             const aba = new ABA({
                 bank: "ANZ",
                 user: "Mr Allowasa Pertolio Branchagovkiy",
                 userNumber: 1234,
                 description: "Creditors Of The Wooloomooloo",
-                time: new Date("2014-07-05T00:08:00.000Z")
+                time: new Date("2014-07-05T00:08:00.000Z"),
             });
 
             const transaction = {
@@ -41,18 +41,18 @@ test("ABA", () => {
                 traceBsb: "061123",
                 traceAccount: "1234567",
                 remitter: "1235",
-                taxAmount: 12
+                taxAmount: 12,
             };
             const file = aba.generate([transaction]);
-            assert.notEqual(file,undefined);
+            assert.notEqual(file, undefined);
             const lines = file.split("\r\n");
             assert.equal(lines[1].slice(0, 3), "106");
             for (const line of lines) {
-                assert.equal(line.length,120);
+                assert.equal(line.length, 120);
             }
         });
 
-        await t.test("generate file with custom data", ()=> {
+        it("generate file with custom data", () => {
             const aba = new ABA({
                 bank: "ANZ",
                 user: "Mr Allowasa Pertolio Branchagovkiy",
@@ -60,7 +60,7 @@ test("ABA", () => {
                 description: "Creditors Of The Wooloomooloo",
                 time: new Date("2014-07-05T00:08:00.000Z"),
                 schemas: {
-                    "2" : {
+                    2: {
                         recordType: "transaction",
                         fields: [
                             { name: "transactionType", boundaries: [0, 1], type: "string" },
@@ -69,9 +69,9 @@ test("ABA", () => {
                             { name: "amount", boundaries: [20, 30], type: "money" },
                             { name: "customRight", boundaries: [40, 70], type: "string", padding: "right" },
                             { name: "customLeft", boundaries: [70, 120], type: "string", padding: "left" },
-                        ]
-                    }
-                }
+                        ],
+                    },
+                },
             });
 
             const transaction = {
@@ -86,28 +86,28 @@ test("ABA", () => {
                 remitter: "1235",
                 taxAmount: 12,
                 customRight: "right padding test",
-                customLeft: "left padding test"
+                customLeft: "left padding test",
             };
 
             const file = aba.generate([transaction]);
 
-            assert.notEqual(file,undefined);
+            assert.notEqual(file, undefined);
             const lines = file.split("\r\n");
 
-            assert.equal(lines[1], '2          123456 130000001200                      right padding testleft padding test                                 ')
-        })
-
-
-
+            assert.equal(
+                lines[1],
+                "2          123456 130000001200                      right padding testleft padding test                                 "
+            );
+        });
     });
 
-    test(".generate", async (t) => {
-        await t.test("must return header in ABA format", () => {
+    describe(".generate", () => {
+        it("must return header in ABA format", () => {
             const aba = new ABA({
                 bank: "ANZ",
                 user: "Company",
                 userNumber: "001337",
-                description: "Creditors"
+                description: "Creditors",
             });
 
             const header = [
@@ -123,21 +123,21 @@ test("ABA", () => {
                 "Creditors   ", // Description of payments
                 moment().format("DDMMYY"), // Date to be processed
                 "    ", // Time to be processed
-                "                                    " // Reserved
+                "                                    ", // Reserved
             ].join("");
-            assert.equal(header.length,120);
+            assert.equal(header.length, 120);
 
             const rows = aba.generate([PAYMENT]).split(/\r\n/);
-            assert.equal(rows[0],header);
+            assert.equal(rows[0], header);
         });
 
-        await t.test("must return payment rows in ABA format", () => {
+        it("must return payment rows in ABA format", () => {
             const aba = new ABA({
                 bank: "ANZ",
                 user: "Company",
                 userNumber: 1337,
                 description: "Creditors",
-                time: new Date("2014-07-05T00:08:00.000Z")
+                time: new Date("2014-07-05T00:08:00.000Z"),
             });
 
             const row = [
@@ -152,9 +152,9 @@ test("ABA", () => {
                 "013-666", // Trace bank/state/branch
                 "   567890", // Trace account
                 "Vault           ", // Remitter
-                "00000000" // Tax amount
+                "00000000", // Tax amount
             ].join("");
-            assert.equal(row.length,120);
+            assert.equal(row.length, 120);
 
             const payment = {
                 bsb: "013-999",
@@ -165,20 +165,20 @@ test("ABA", () => {
                 reference: "Order 132",
                 traceBsb: "013-666",
                 traceAccount: "567890",
-                remitter: "Vault"
+                remitter: "Vault",
             };
 
             const rows = aba.generate([payment]).split(/\r\n/);
-            assert.equal(rows[1],row);
+            assert.equal(rows[1], row);
         });
 
-        await t.test("must return footer in ABA format", () => {
+        it("must return footer in ABA format", () => {
             const aba = new ABA({
                 bank: "ANZ",
                 user: "Company",
                 userNumber: 1337,
                 description: "Creditors",
-                time: new Date("2014-07-05T00:08:00.000Z")
+                time: new Date("2014-07-05T00:08:00.000Z"),
             });
 
             const footer = [
@@ -190,56 +190,56 @@ test("ABA", () => {
                 "0000000000", // Debit total
                 "                        ", // Reserved
                 "000003", // Payment count
-                "                                        " // Reserved
+                "                                        ", // Reserved
             ].join("");
-            assert.equal(footer.length,120);
+            assert.equal(footer.length, 120);
 
             const payment = { ...PAYMENT, amount: 0 };
             const payments = [payment, payment, payment];
             const rows = aba.generate(payments).split(/\r\n/);
-            assert.equal(rows[4],footer);
+            assert.equal(rows[4], footer);
         });
 
-        await t.test("must use given BSB and account", () => {
+        it("must use given BSB and account", () => {
             const aba = new ABA({
                 bsb: "013-999",
                 account: "123456",
                 bank: "ANZ",
                 user: "Company",
                 userNumber: 1337,
-                description: "Creditors"
+                description: "Creditors",
             });
 
             const rows = aba.generate([PAYMENT]).split(/\r\n/);
-            assert.equal(rows[0].slice(1, 17),"013-999   123456");
+            assert.equal(rows[0].slice(1, 17), "013-999   123456");
         });
 
-        await t.test("must leave time blank if only date given", () => {
+        it("must leave time blank if only date given", () => {
             const aba = new ABA({
                 bank: "ANZ",
                 user: "Company",
                 userNumber: 1337,
                 description: "Creditors",
-                date: new Date(2007, 5, 18)
+                date: new Date(2007, 5, 18),
             });
 
             const rows = aba.generate([PAYMENT]).split(/\r\n/);
-            assert.equal(rows[0].slice(74, 84),"180607    ");
+            assert.equal(rows[0].slice(74, 84), "180607    ");
         });
 
-        await t.test("must use current date if not given", () => {
+        it("must use current date if not given", () => {
             const aba = new ABA({
                 bank: "ANZ",
                 user: "Company",
                 userNumber: 1337,
-                description: "Creditors"
+                description: "Creditors",
             });
 
             const rows = aba.generate([PAYMENT]).split(/\r\n/);
-            assert.equal(rows[0].slice(74, 84),moment().format("DDMMYY    "));
+            assert.equal(rows[0].slice(74, 84), moment().format("DDMMYY    "));
         });
 
-        await t.test("must use given time", () => {
+        it("must use given time", () => {
             const time = new Date("2014-07-05T00:08:00.000Z");
 
             const aba = new ABA({
@@ -247,20 +247,20 @@ test("ABA", () => {
                 user: "Company",
                 userNumber: 1337,
                 description: "Creditors",
-                time
+                time,
             });
 
             const rows = aba.generate([PAYMENT]).split(/\r\n/);
-            assert.equal(rows[0].slice(74, 84),moment(time).format("DDMMYYHHmm"));
+            assert.equal(rows[0].slice(74, 84), moment(time).format("DDMMYYHHmm"));
         });
 
-        await t.test("must use given tax and tax amount", () => {
+        it("must use given tax and tax amount", () => {
             const aba = new ABA({
                 bank: "ANZ",
                 user: "Company",
                 userNumber: 1337,
                 description: "Creditors",
-                time: new Date("2014-07-05T00:08:00.000Z")
+                time: new Date("2014-07-05T00:08:00.000Z"),
             });
 
             const payment = {
@@ -274,21 +274,21 @@ test("ABA", () => {
                 traceAccount: "567890",
                 remitter: "Vault",
                 tax: "X",
-                taxAmount: 666.13
+                taxAmount: 666.13,
             };
 
             const rows = aba.generate([payment]).split(/\r\n/);
-            assert.equal(rows[1].slice(17, 18),"X");
-            assert.equal(rows[1].slice(112, 120),"00066613");
+            assert.equal(rows[1].slice(17, 18), "X");
+            assert.equal(rows[1].slice(112, 120), "00066613");
         });
 
-        await t.test("must sum up credit and debit totals", () => {
+        it("must sum up credit and debit totals", () => {
             const aba = new ABA({
                 bank: "ANZ",
                 user: "Company",
                 userNumber: 1337,
                 description: "Creditors",
-                time: new Date("2014-07-05T00:08:00.000Z")
+                time: new Date("2014-07-05T00:08:00.000Z"),
             });
 
             const defaults = {
@@ -298,7 +298,7 @@ test("ABA", () => {
                 reference: "Order 132",
                 traceBsb: "013-666",
                 traceAccount: "567890",
-                remitter: "Vault"
+                remitter: "Vault",
             };
 
             const creditA = { ...defaults, amount: 1337.42, transactionCode: 50 };
@@ -310,42 +310,42 @@ test("ABA", () => {
             let footer = [
                 "0000056671", // Credit minus debit total
                 "0000185006", // Credit total
-                "0000128335" // Debit total
+                "0000128335", // Debit total
             ].join("");
 
             const rows = aba.generate(payments).split(/\r\n/);
-            assert.equal(rows[5].substr(20, 30),footer);
+            assert.equal(rows[5].substr(20, 30), footer);
         });
 
-        await t.test("must return a negative net as positive", () => {
+        it("must return a negative net as positive", () => {
             const aba = new ABA({
                 bank: "ANZ",
                 user: "Company",
                 userNumber: 1337,
                 description: "Creditors",
-                time: new Date("2014-07-05T00:08:00.000Z")
+                time: new Date("2014-07-05T00:08:00.000Z"),
             });
 
             const payments = [
                 { ...PAYMENT, transactionCode: ABA.CREDIT, amount: 111.11 },
                 { ...PAYMENT, transactionCode: ABA.PAY, amount: 555.55 },
-                { ...PAYMENT, transactionCode: ABA.DEBIT, amount: 1337.42 }
+                { ...PAYMENT, transactionCode: ABA.DEBIT, amount: 1337.42 },
             ];
 
             const footer = aba._getFooter(payments);
-            assert.equal(footer.numberOfTransactions,3);
-            assert.equal(footer.creditTotal,"666.66");
-            assert.equal(footer.debitTotal,"1337.42");
-            assert.equal(footer.netTotal,"670.76");
+            assert.equal(footer.numberOfTransactions, 3);
+            assert.equal(footer.creditTotal, "666.66");
+            assert.equal(footer.debitTotal, "1337.42");
+            assert.equal(footer.netTotal, "670.76");
 
             let result = [
                 "0000067076", // Credit minus debit total
                 "0000066666", // Credit total
-                "0000133742" // Debit total
+                "0000133742", // Debit total
             ].join("");
 
             const rows = aba.generate(payments).split(/\r\n/);
-            assert.equal(rows[4].substr(20, 30),result);
+            assert.equal(rows[4].substr(20, 30), result);
         });
     });
 });
