@@ -8,7 +8,7 @@ const defaultAbaSchemas = {
             { name: "sequenceNumber", boundaries: [18, 20], type: "integer" },
             { name: "bank", boundaries: [20, 23], type: "string" },
             { name: "user", boundaries: [30, 56], type: "string", padding: "left" }, // L
-            { name: "userNumber", boundaries: [56, 62], type: "string" },
+            { name: "userNumber", boundaries: [56, 62], type: "integer" },
             { name: "description", boundaries: [62, 74], type: "string", padding: "left" }, // L
             { name: "date", boundaries: [74, 80], type: "string" },
             { name: "time", boundaries: [80, 84], type: "string" },
@@ -93,18 +93,19 @@ const formatBsb = (bsb) => {
 class ABA {
     /**
      * Specify the settings of the ABA file.
-     * @param [options] {Object} Header data.
+     * @param [options.header] {Object} Header data.
      * @param [options.header.bank] {String} Name of financial institution processing this file. 3 characters, like "ANZ", "WBC"
      * @param [options.header.user] {String} How the user will be shown in the transactions of the third party banks.
      * @param [options.header.userNumber] {Number} The ID of the user supplying the file.
      * @param [options.header.description] {String} Description of this file entries. Up to 12 chars.
      * @param [options.header.bsb=""] {String} Main account BSB. Should be ignored according to the specs.
-     * @param [options.header.date=Date.now()] {Date|Number} Date to be processed.
-     * @param [options.header.time] {Date|Number} Time to be processed. Should be ignored according to the specs.
+     * @param [options.header.date=Date.now()] {Date|Number|String} Date to be processed. If string must be DDMMYY format
+     * @param [options.header.time] {Date|Number|String} Time to be processed. Should be ignored according to the specs. If string must be HHmm format
      * @param [options.header.account=""] {String} Main account number. Up to 9 chars. Should be ignored according to the specs.
      *
-     * @param [options.footer.type="7"] {String}
-     * @param [options.footer.bsb="999999"] {String}
+     * @param [options.footer] {Object} Footer data.
+     * @param [options.footer.type="7"] {String} This is an auto-generated field. But you can override it with anything.
+     * @param [options.footer.bsb="999999"] {String} This is an auto-generated field. But you can override it with anything.
      * @param [options.footer.netTotal] {String} This is an auto-generated field. But you can override it with anything.
      * @param [options.footer.creditTotal] {String} This is an auto-generated field. But you can override it with anything.
      * @param [options.footer.debitTotal] {String} This is auto-generated field. But you can override it with anything.
@@ -123,16 +124,18 @@ class ABA {
 
         let { date, time } = this.options.header;
 
-        if (typeof date !== "string") {
-            // DDMMYY
+        const newDate = new Date(time || date || new Date());
+
+        // if date is not 6 char string, force format DDMMYY here
+        if (typeof date !== "string" || date.length !== 6) {
             this.options.header.date =
-                pad2(time.getDate()) + pad2(time.getMonth() + 1) + pad2(time.getFullYear() % 100);
+                pad2(newDate.getDate()) + pad2(newDate.getMonth() + 1) + pad2(newDate.getFullYear() % 100);
         }
 
-        if (time && typeof time !== "string") {
-            time = new Date(this.options.header.time || this.options.header.date || new Date());
+        // if time is not 4 char string, force format DDMMYY here
+        if (time && (typeof time !== "string" || time.length !== 4)) {
             // HHmm
-            this.options.header.time = time ? pad2(time.getHours()) + pad2(time.getMinutes()) : "";
+            this.options.header.time = pad2(newDate.getHours()) + pad2(newDate.getMinutes());
         }
     }
 

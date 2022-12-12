@@ -25,11 +25,13 @@ describe("ABA", () => {
 
         it("generates file", () => {
             const aba = new ABA({
-                bank: "ANZ",
-                user: "Mr Allowasa Pertolio Branchagovkiy",
-                userNumber: 1234,
-                description: "Creditors Of The Wooloomooloo",
-                time: new Date("2014-07-05T00:08:00.000Z"),
+                header: {
+                    bank: "ANZ",
+                    user: "Mr Allowasa Pertolio Branchagovkiy",
+                    userNumber: 1234,
+                    description: "Creditors Of The Wooloomooloo",
+                    time: new Date("2014-07-05T00:08:00.000Z"),
+                },
             });
 
             const transaction = {
@@ -54,11 +56,13 @@ describe("ABA", () => {
 
         it("generate file with custom data", () => {
             const aba = new ABA({
-                bank: "ANZ",
-                user: "Mr Allowasa Pertolio Branchagovkiy",
-                userNumber: 1234,
-                description: "Creditors Of The Wooloomooloo",
-                time: new Date("2014-07-05T00:08:00.000Z"),
+                header: {
+                    bank: "ANZ",
+                    user: "Mr Allowasa Pertolio Branchagovkiy",
+                    userNumber: 1234,
+                    description: "Creditors Of The Wooloomooloo",
+                    time: new Date("2014-07-05T00:08:00.000Z"),
+                },
                 schemas: {
                     2: {
                         recordType: "transaction",
@@ -104,10 +108,7 @@ describe("ABA", () => {
     describe(".generate", () => {
         it("must return header in ABA format", () => {
             const aba = new ABA({
-                bank: "ANZ",
-                user: "Company",
-                userNumber: 1337,
-                description: "Creditors",
+                header: { bank: "ANZ", user: "Company", userNumber: 1337, description: "Creditors" },
             });
 
             const header = [
@@ -133,11 +134,13 @@ describe("ABA", () => {
 
         it("must return payment rows in ABA format", () => {
             const aba = new ABA({
-                bank: "ANZ",
-                user: "Company",
-                userNumber: 1337,
-                description: "Creditors",
-                time: new Date("2014-07-05T00:08:00.000Z"),
+                header: {
+                    bank: "ANZ",
+                    user: "Company",
+                    userNumber: 1337,
+                    description: "Creditors",
+                    time: new Date("2014-07-05T00:08:00.000Z"),
+                },
             });
 
             const row = [
@@ -174,11 +177,13 @@ describe("ABA", () => {
 
         it("must return footer in ABA format", () => {
             const aba = new ABA({
-                bank: "ANZ",
-                user: "Company",
-                userNumber: 1337,
-                description: "Creditors",
-                time: new Date("2014-07-05T00:08:00.000Z"),
+                header: {
+                    bank: "ANZ",
+                    user: "Company",
+                    userNumber: 1337,
+                    description: "Creditors",
+                    time: new Date("2014-07-05T00:08:00.000Z"),
+                },
             });
 
             const footer = [
@@ -202,12 +207,14 @@ describe("ABA", () => {
 
         it("must use given BSB and account", () => {
             const aba = new ABA({
-                bsb: "013-999",
-                account: "123456",
-                bank: "ANZ",
-                user: "Company",
-                userNumber: 1337,
-                description: "Creditors",
+                header: {
+                    bsb: "013-999",
+                    account: "123456",
+                    bank: "ANZ",
+                    user: "Company",
+                    userNumber: 1337,
+                    description: "Creditors",
+                },
             });
 
             const rows = aba.generate([PAYMENT]).split(/\r\n/);
@@ -216,11 +223,13 @@ describe("ABA", () => {
 
         it("must leave time blank if only date given", () => {
             const aba = new ABA({
-                bank: "ANZ",
-                user: "Company",
-                userNumber: 1337,
-                description: "Creditors",
-                date: new Date(2007, 5, 18),
+                header: {
+                    bank: "ANZ",
+                    user: "Company",
+                    userNumber: 1337,
+                    description: "Creditors",
+                    date: new Date(2007, 5, 18),
+                },
             });
 
             const rows = aba.generate([PAYMENT]).split(/\r\n/);
@@ -229,10 +238,12 @@ describe("ABA", () => {
 
         it("must use current date if not given", () => {
             const aba = new ABA({
-                bank: "ANZ",
-                user: "Company",
-                userNumber: 1337,
-                description: "Creditors",
+                header: {
+                    bank: "ANZ",
+                    user: "Company",
+                    userNumber: 1337,
+                    description: "Creditors",
+                },
             });
 
             const rows = aba.generate([PAYMENT]).split(/\r\n/);
@@ -243,11 +254,13 @@ describe("ABA", () => {
             const time = new Date("2014-07-05T00:08:00.000Z");
 
             const aba = new ABA({
-                bank: "ANZ",
-                user: "Company",
-                userNumber: 1337,
-                description: "Creditors",
-                time,
+                header: {
+                    bank: "ANZ",
+                    user: "Company",
+                    userNumber: 1337,
+                    description: "Creditors",
+                    time,
+                },
             });
 
             const rows = aba.generate([PAYMENT]).split(/\r\n/);
@@ -256,11 +269,13 @@ describe("ABA", () => {
 
         it("must use given tax and tax amount", () => {
             const aba = new ABA({
-                bank: "ANZ",
-                user: "Company",
-                userNumber: 1337,
-                description: "Creditors",
-                time: new Date("2014-07-05T00:08:00.000Z"),
+                header: {
+                    bank: "ANZ",
+                    user: "Company",
+                    userNumber: 1337,
+                    description: "Creditors",
+                    time: new Date("2014-07-05T00:08:00.000Z"),
+                },
             });
 
             const payment = {
@@ -284,11 +299,13 @@ describe("ABA", () => {
 
         it("must sum up credit and debit totals", () => {
             const aba = new ABA({
-                bank: "ANZ",
-                user: "Company",
-                userNumber: 1337,
-                description: "Creditors",
-                time: new Date("2014-07-05T00:08:00.000Z"),
+                header: {
+                    bank: "ANZ",
+                    user: "Company",
+                    userNumber: 1337,
+                    description: "Creditors",
+                    time: new Date("2014-07-05T00:08:00.000Z"),
+                },
             });
 
             const defaults = {
@@ -319,25 +336,19 @@ describe("ABA", () => {
 
         it("must return a negative net as positive", () => {
             const aba = new ABA({
-                bank: "ANZ",
-                user: "Company",
-                userNumber: 1337,
-                description: "Creditors",
-                time: new Date("2014-07-05T00:08:00.000Z"),
+                header: {
+                    bank: "ANZ",
+                    user: "Company",
+                    userNumber: 1337,
+                    description: "Creditors",
+                    time: new Date("2014-07-05T00:08:00.000Z"),
+                },
             });
-
             const payments = [
                 { ...PAYMENT, transactionCode: ABA.CREDIT, amount: 111.11 },
                 { ...PAYMENT, transactionCode: ABA.PAY, amount: 555.55 },
                 { ...PAYMENT, transactionCode: ABA.DEBIT, amount: 1337.42 },
             ];
-
-            const footer = aba._getFooter(payments);
-            assert.equal(footer.numberOfTransactions, 3);
-            assert.equal(footer.creditTotal, "666.66");
-            assert.equal(footer.debitTotal, "1337.42");
-            assert.equal(footer.netTotal, "670.76");
-
             let result = [
                 "0000067076", // Credit minus debit total
                 "0000066666", // Credit total
@@ -345,6 +356,7 @@ describe("ABA", () => {
             ].join("");
 
             const rows = aba.generate(payments).split(/\r\n/);
+
             assert.equal(rows[4].substr(20, 30), result);
         });
     });

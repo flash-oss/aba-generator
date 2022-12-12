@@ -7,6 +7,11 @@ Notable:
 - The minified version of this module is 10.0KB. No dependencies.
 - The source code of `aba-generator` is quite easy to read, understand, and amend. We welcome any changes.
 
+### Changes from previous version:
+
+- **Breaking changes:** All data for Descriptive Record (Record Type = 0) is now located in `options: { header: headerData }`, previously was `options: {...headerData}`
+- Support for the generation of modified ABA files has been added.
+
 ## Usage
 
 Installation
@@ -21,16 +26,18 @@ Minimal example of sending money from your account:
 const ABA = require("aba-generator");
 
 const aba = new ABA({
-  bank: "ANZ", // The bank processing this file
-  user: "Allowasa Pertolio Accounting&Tax", // Your (money sender) company name
-  userNumber: 1234, // Your ID in the bank system, often hardcoded to some number. Consult with your bank
-  description: "Credits Of The Wooloomooloo", // Description of the transactions within the file
+  header: {
+    bank: "ANZ", // The bank processing this file
+    user: "Allowasa Pertolio Accounting&Tax", // Your (money sender) company name
+    userNumber: 1234, // Your ID in the bank system, often hardcoded to some number. Consult with your bank
+    description: "Credits Of The Wooloomooloo", // Description of the transactions within the file
 
-  // Optional
-  // bsb: String, // Main account BSB. Not in the ABA spec, but required by most banks
-  // account: String, // Main account number. Not in the ABA spec, but required by most banks
-  // date: Date|String|Number, // The date to be processed, default is now
-  // time: Date|String|Number, // The time to be processed. Not in the ABA spec, but required by ANZ
+    // Optional
+    // bsb: String, // Main account BSB. Not in the ABA spec, but required by most banks
+    // account: String, // Main account number. Not in the ABA spec, but required by most banks
+    // date: Date|String|Number, // The date to be processed, default is now. If string must be DDMMYY format
+    // time: Date|String|Number, // The time to be processed. Not in the ABA spec, but required by ANZ. If string must be HHmm format
+  },
 });
 
 const transaction = {
@@ -84,17 +91,23 @@ Even though the format is standardised, banks typically mandate some fields to b
 Constructor options:
 
 ```
- * Specify the header of the ABA file.
- * @param options {Object} Header data.
- * @param [options.bsb=""] {String} Main account BSB. Should be ignored according to the specs.
- * @param [options.account=""] {String} Main account number. Up to 9 chars. Should be ignored according to the specs.
- * @param options.bank {String} Name of financial institution processing this file. 3 characters, like "ANZ", "WBC"
- * @param options.user {String} How the user will be shown in the transactions of the third party banks.
- * @param options.userNumber {Number} The ID of the user supplying the file.
- * @param options.description {String} Description of this file entries. Up to 12 chars.
- * @param [options.date=Date.now()] {Date|String|Number} Date to be processed.
- * @param [options.time] {Date|String|Number} Time to be processed. Should be ignored according to the specs.
- * @param [options.schemas] { [key in RecordTypeNumber]?: RecordSchema } custom schemas
+* @param [options] {Object} Header data.
+* @param [options.header.bank] {String} Name of financial institution processing this file. 3 characters, like "ANZ", "WBC"
+* @param [options.header.user] {String} How the user will be shown in the transactions of the third party banks.
+* @param [options.header.userNumber] {Number} The ID of the user supplying the file.
+* @param [options.header.description] {String} Description of this file entries. Up to 12 chars.
+* @param [options.header.bsb=""] {String} Main account BSB. Should be ignored according to the specs.
+* @param [options.header.date=Date.now()] {Date|Number} Date to be processed.
+* @param [options.header.time] {Date|Number} Time to be processed. Should be ignored according to the specs.
+* @param [options.header.account=""] {String} Main account number. Up to 9 chars. Should be ignored according to the specs.
+
+* @param [options.footer.type="7"] {String} This is an auto-generated field. But you can override it with anything.
+* @param [options.footer.bsb="999999"] {String} This is an auto-generated field. But you can override it with anything.
+* @param [options.footer.netTotal] {String} This is an auto-generated field. But you can override it with anything.
+* @param [options.footer.creditTotal] {String} This is an auto-generated field. But you can override it with anything.
+* @param [options.footer.debitTotal] {String} This is auto-generated field. But you can override it with anything.
+* @param [options.footer.numberOfTransactions] {String} This is an auto-generated field. But you can override it with anything.
+* @param [options.schemas] { [key in RecordTypeNumber]?: RecordSchema } custom schemas
 ```
 
 ### Custom transaction generating
@@ -146,7 +159,7 @@ customSchemas = {
   },
 };
 
-const aba = new ABA({ ...headerData, schemas: customSchemas });
+const aba = new ABA({ header: headerData, schemas: customSchemas });
 ```
 
 ### Attention! In order to generate standard footer you must have at least these transaction fields
@@ -194,9 +207,8 @@ const customSchemas = {
 };
 
 const aba = new ABA({
-  ...headerData,
+  header: { type: "6", custom: "any", bsb: "123456", account: "12345678" },
   schemas: customSchemas,
-  customHeaderData: { type: "6", custom: "any" },
 });
 
 const batches = aba.generate([transactions]);
@@ -281,9 +293,7 @@ In the end your code can look like this
 
 ```js
 const { ABA } = require("aba-generator");
-const options = {
-  schemas: { customSchema, customSchema },
-};
+const options = { header, schemas: { customSchema, customSchema } };
 const aba = new ABA(options);
 const batch = aba.generate([transactions]);
 ```
