@@ -106,7 +106,7 @@ describe("ABA", () => {
             const aba = new ABA({
                 bank: "ANZ",
                 user: "Company",
-                userNumber: "001337",
+                userNumber: 1337,
                 description: "Creditors",
             });
 

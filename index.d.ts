@@ -19,8 +19,6 @@ declare module "aba-generator" {
         date?: Date | string | number; // Date to be processed.
         time?: Date | string | number; // Time to be processed. Should be ignored according to the specs.
         schemas?: { [key in RecordTypeNumber]?: RecordSchema };
-        customHeaderData?: { [x: string]: string | number | Date };
-        customFooterData?: { [x: string]: string | number | Date };
     }
 
     interface Transaction {

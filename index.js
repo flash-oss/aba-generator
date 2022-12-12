@@ -92,25 +92,48 @@ const formatBsb = (bsb) => {
 
 class ABA {
     /**
-     * Specify the header of the ABA file.
-     * @param options {Object} Header data.
-     * @param [options.bsb=""] {String} Main account BSB. Should be ignored according to the specs.
-     * @param [options.account=""] {String} Main account number. Up to 9 chars. Should be ignored according to the specs.
-     * @param options.bank {String} Name of financial institution processing this file. 3 characters, like "ANZ", "WBC"
-     * @param options.user {String} How the user will be shown in the transactions of the third party banks.
-     * @param options.userNumber {Number} The ID of the user supplying the file.
-     * @param options.description {String} Description of this file entries. Up to 12 chars.
-     * @param [options.date=Date.now()] {Date|String|Number} Date to be processed.
-     * @param [options.time] {Date|String|Number} Time to be processed. Should be ignored according to the specs.
+     * Specify the settings of the ABA file.
+     * @param [options] {Object} Header data.
+     * @param [options.header.bank] {String} Name of financial institution processing this file. 3 characters, like "ANZ", "WBC"
+     * @param [options.header.user] {String} How the user will be shown in the transactions of the third party banks.
+     * @param [options.header.userNumber] {Number} The ID of the user supplying the file.
+     * @param [options.header.description] {String} Description of this file entries. Up to 12 chars.
+     * @param [options.header.bsb=""] {String} Main account BSB. Should be ignored according to the specs.
+     * @param [options.header.date=Date.now()] {Date|Number} Date to be processed.
+     * @param [options.header.time] {Date|Number} Time to be processed. Should be ignored according to the specs.
+     * @param [options.header.account=""] {String} Main account number. Up to 9 chars. Should be ignored according to the specs.
+     *
+     * @param [options.footer.type="7"] {String}
+     * @param [options.footer.bsb="999999"] {String}
+     * @param [options.footer.netTotal] {String} This is an auto-generated field. But you can override it with anything.
+     * @param [options.footer.creditTotal] {String} This is an auto-generated field. But you can override it with anything.
+     * @param [options.footer.debitTotal] {String} This is auto-generated field. But you can override it with anything.
+     * @param [options.footer.numberOfTransactions] {String} This is an auto-generated field. But you can override it with anything.
+     *
      * @param [options.schemas] {Object} Custom schemas
-     * @param [options.customHeaderData] {Object} Custom data for custom header, warning, will overwrite standard field if name will be the same
-     * @param [options.customFooterData] {Object} Custom data for custom footer, warning, will overwrite standard field if name will be the same
 
      */
     constructor(options) {
         this.schemas = defaultAbaSchemas;
         this.schemas = Object.assign(this.schemas, options?.schemas);
-        this.options = { ...ABA.HEADER_DEFAULTS, ...options };
+        this.options = {
+            header: { ...ABA.HEADER_DEFAULTS, ...options?.header },
+            footer: { ...ABA.FOOTER_DEFAULTS, ...options?.footer },
+        };
+
+        let { date, time } = this.options.header;
+
+        if (typeof date !== "string") {
+            // DDMMYY
+            this.options.header.date =
+                pad2(time.getDate()) + pad2(time.getMonth() + 1) + pad2(time.getFullYear() % 100);
+        }
+
+        if (time && typeof time !== "string") {
+            time = new Date(this.options.header.time || this.options.header.date || new Date());
+            // HHmm
+            this.options.header.time = time ? pad2(time.getHours()) + pad2(time.getMinutes()) : "";
+        }
     }
 
     // Parse any provided lines with schemas
@@ -133,7 +156,7 @@ class ABA {
 
     /**
      * Generate ABA file of these transactions.
-     * @param transactions {Object[]} Transactions in the file
+     * @param transactions {Transaction[]} Transactions in the file
      * @param transactions[].bsb {String} The third party account BSB
      * @param [transactions[].tax=" "] {"N"|"W"|"X"|"Y"|" "|""}
      * @param transactions[].transactionCode {Number|ABA.CREDIT|ABA.DEBIT} Debit or credit? ABA.CREDIT or ABA.DEBIT
@@ -164,44 +187,27 @@ class ABA {
      * @private
      */
     formatHeader() {
-        const time = new Date(this.options.time || this.options.date || new Date());
-
-        const headerData = {
-            ...this.options, // breaking change this.options.header
-            date: pad2(time.getDate()) + pad2(time.getMonth() + 1) + pad2(time.getFullYear() % 100), // DDMMYY
-            bsb: this.options.bsb,
-            time: this.options.time ? pad2(time.getHours()) + pad2(time.getMinutes()) : "", // HHmm
-            ...this.options?.customHeaderData,
-        };
-
-        return this._generateLine(headerData, this.schemas[headerData.type]);
+        return this._generateLine(this.options.header, this.schemas[this.options.header.type]);
     }
 
     /**
      * @private
      */
     formatFooter(transactions) {
-        return this._generateLine(this._getFooter(transactions), this.schemas["7"]);
-    }
-
-    /**
-     * @private
-     */
-    _getFooter(transactions) {
         const credits = transactions.filter((p) => p.transactionCode === ABA.CREDIT || p.transactionCode === ABA.PAY);
         const debits = transactions.filter((p) => p.transactionCode === ABA.DEBIT);
         const credit = sum(credits.map((c) => c.amount));
         const debit = sum(debits.map((d) => d.amount));
 
-        return {
-            type: "7",
-            bsb: "999999",
+        const footer = {
             netTotal: difference(credit, debit),
             creditTotal: credit,
             debitTotal: debit,
             numberOfTransactions: transactions.length,
-            ...this.options?.customFooterData,
+            ...this.options.footer,
         };
+
+        return this._generateLine(footer, this.schemas[this.options.footer.type]);
     }
 }
 
@@ -221,6 +227,10 @@ ABA.HEADER_DEFAULTS = {
     account: "",
     description: "",
     time: "",
+};
+ABA.FOOTER_DEFAULTS = {
+    type: "7",
+    bsb: "999999",
 };
 
 module.exports = ABA;

@@ -27,8 +27,8 @@ const aba = new ABA({
   description: "Credits Of The Wooloomooloo", // Description of the transactions within the file
 
   // Optional
-  // bsb: String, // Main account BSB. Not in the ABA spec, but required by ANZ
-  // account: String, // Main account number. Not in the ABA spec, but required by ANZ
+  // bsb: String, // Main account BSB. Not in the ABA spec, but required by most banks
+  // account: String, // Main account number. Not in the ABA spec, but required by most banks
   // date: Date|String|Number, // The date to be processed, default is now
   // time: Date|String|Number, // The time to be processed. Not in the ABA spec, but required by ANZ
 });
@@ -95,8 +95,6 @@ Constructor options:
  * @param [options.date=Date.now()] {Date|String|Number} Date to be processed.
  * @param [options.time] {Date|String|Number} Time to be processed. Should be ignored according to the specs.
  * @param [options.schemas] { [key in RecordTypeNumber]?: RecordSchema } custom schemas
- * @param [options.customHeaderData] {key: data} custom data for custom header, warning, will overwrite standard field if name will be the same
- * @param [options.customFooterData] {key: data} custom data for custom footer, warning, will overwrite standard field if name will be the same
 ```
 
 ### Custom transaction generating
@@ -151,24 +149,23 @@ customSchemas = {
 const aba = new ABA({ ...headerData, schemas: customSchemas });
 ```
 
-### Attention!In order for generator to generate standard footer, you must have at least this transaction fields
+### Attention! In order to generate standard footer you must have at least these transaction fields
 
 ```js
-  fields: [
-    { name: "transactionType", boundaries: [0, 1], type: "string" },
-    { name: "transactionCode", boundaries: [18, 20], type: "integer" },
-    { name: "amount", boundaries: [20, 30], type: "money" },
-  ]
+fields: [
+  { name: "transactionType", boundaries: [0, 1], type: "string" },
+  { name: "transactionCode", boundaries: [18, 20], type: "integer" },
+  { name: "amount", boundaries: [20, 30], type: "money" },
+];
 ```
 
-In other way you can provide final data manually using `customFooterData`
-
+Otherwise, you can provide final data manually using `customFooterData`
 
 ### Custom schema use example
 
 ```js
 const customSchemas = {
-  "5": {
+  5: {
     recordType: "transaction",
     fields: [
       { name: "transactionType", boundaries: [0, 1], type: "string" },
@@ -185,7 +182,7 @@ const customSchemas = {
       { name: "customMoney", boundaries: [165, 170], type: "money" },
     ],
   },
-  "6": {
+  6: {
     recordType: "header",
     fields: [
       { name: "type", boundaries: [0, 1], type: "string" },
@@ -196,7 +193,11 @@ const customSchemas = {
   },
 };
 
-const aba = new ABA({...headerData, schemas: customSchemas, customHeaderData: {type: "6", custom: "any"} });
+const aba = new ABA({
+  ...headerData,
+  schemas: customSchemas,
+  customHeaderData: { type: "6", custom: "any" },
+});
 
 const batches = aba.generate([transactions]);
 ```
@@ -217,7 +218,12 @@ const defaultAbaSchemas = {
       { name: "bank", boundaries: [20, 23], type: "string" },
       { name: "user", boundaries: [30, 56], type: "string", padding: "left" },
       { name: "userNumber", boundaries: [56, 62], type: "string" },
-      { name: "description", boundaries: [62, 74], type: "string", padding: "left" },
+      {
+        name: "description",
+        boundaries: [62, 74],
+        type: "string",
+        padding: "left",
+      },
       { name: "date", boundaries: [74, 80], type: "string" },
       { name: "time", boundaries: [80, 84], type: "string" },
       { name: "filler", boundaries: [84, 120], type: "string" }, // filler to match 120 char line size
@@ -232,11 +238,26 @@ const defaultAbaSchemas = {
       { name: "tax", boundaries: [17, 18], type: "string" },
       { name: "transactionCode", boundaries: [18, 20], type: "integer" },
       { name: "amount", boundaries: [20, 30], type: "money" },
-      { name: "accountTitle", boundaries: [30, 62], type: "string", padding: "left" },
-      { name: "reference", boundaries: [62, 80], type: "string", padding: "left" },
+      {
+        name: "accountTitle",
+        boundaries: [30, 62],
+        type: "string",
+        padding: "left",
+      },
+      {
+        name: "reference",
+        boundaries: [62, 80],
+        type: "string",
+        padding: "left",
+      },
       { name: "traceBsb", boundaries: [80, 87], type: "bsb" },
       { name: "traceAccount", boundaries: [87, 96], type: "string" },
-      { name: "remitter", boundaries: [96, 112], type: "string", padding: "left" },
+      {
+        name: "remitter",
+        boundaries: [96, 112],
+        type: "string",
+        padding: "left",
+      },
       { name: "taxAmount", boundaries: [112, 120], type: "money" },
     ],
   },
@@ -262,12 +283,10 @@ In the end your code can look like this
 const { ABA } = require("aba-generator");
 const options = {
   schemas: { customSchema, customSchema },
-  
 };
 const aba = new ABA(options);
 const batch = aba.generate([transactions]);
 ```
-
 
 ### .generate(transactions)
 
