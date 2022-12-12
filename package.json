@@ -5,7 +5,7 @@
   "main": "index.js",
   "types": "./index.d.ts",
   "repository": "git@github.com:flash-oss/aba-generator.git",
-  "license": "Apache-2",
+  "license": "Apache-2.0",
   "keywords": [
     "ABA",
     "generator",
