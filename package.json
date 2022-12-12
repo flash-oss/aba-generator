@@ -19,9 +19,9 @@
     "transaction"
   ],
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "moment": "^2.24.0",
-    "prettier": "^2.4.1"
+    "eslint": "^8.29.0",
+    "moment": "^2.29.4",
+    "prettier": "^2.8.1"
   },
   "scripts": {
     "lint": "eslint .",
@@ -33,12 +33,11 @@
   ],
   "eslintConfig": {
     "parserOptions": {
-      "ecmaVersion": 2020
+      "ecmaVersion": 2022
     },
     "env": {
       "es6": true,
-      "node": true,
-      "mocha": false
+      "node": true
     },
     "extends": "eslint:recommended"
   }
