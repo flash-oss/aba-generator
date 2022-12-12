@@ -50,29 +50,33 @@ const defaultAbaSchemas = {
 function reformatFieldType(fieldData, field) {
     const fieldLength = field.boundaries[1] - field.boundaries[0];
 
-    if (field.padding === "left" && field.type === "string") {
-        fieldData = String(fieldData);
-        // expand with spaces
-        return fieldData.padEnd(fieldLength, " ").substring(0, fieldLength);
-    }
-    if (field.type === "string") {
-        fieldData = String(fieldData);
-        // expand with spaces
-        return fieldData.padStart(fieldLength, " ").substring(0, fieldLength);
-    }
     if (field.type === "money") {
         // fill with left 0 nad to cents
         return toCents(fieldData).padStart(fieldLength, "0").substring(0, fieldLength);
     }
+
+    fieldData = String(fieldData);
+
+    if (field.type === "string") {
+        if (field.padding === "left") {
+            // expand with spaces
+            return fieldData.padEnd(fieldLength, " ").substring(0, fieldLength);
+        } else {
+            // expand with spaces
+            return fieldData.padStart(fieldLength, " ").substring(0, fieldLength);
+        }
+    }
+
     if (field.type === "integer") {
         // fill with left 0
-        return String(fieldData).padStart(fieldLength, "0").substring(0, fieldLength);
+        return fieldData.padStart(fieldLength, "0").substring(0, fieldLength);
     }
+
     if (field.type === "bsb") {
-        fieldData = String(fieldData);
         // no expand need
         return formatBsb(fieldData).padStart(fieldLength, " ").substring(0, fieldLength);
     }
+
     return String(fieldData).padStart(fieldLength, " ").substring(0, fieldLength);
 }
 
@@ -118,7 +122,7 @@ class ABA {
         let pointer = 0;
         for (const field of recordSchema.fields) {
             if (field.boundaries[0] - pointer < 0) {
-                throw Error("Custom schema error, please provide field boundaries in grow order")
+                throw Error("Custom schema error, please provide field boundaries in grow order");
             }
             let filler = " ".repeat(field.boundaries[0] - pointer);
             generateResult.push(filler + reformatFieldType(recordData[field.name] || "", field));
@@ -167,7 +171,7 @@ class ABA {
             date: pad2(time.getDate()) + pad2(time.getMonth() + 1) + pad2(time.getFullYear() % 100), // DDMMYY
             bsb: this.options.bsb,
             time: this.options.time ? pad2(time.getHours()) + pad2(time.getMinutes()) : "", // HHmm
-            ...this.options?.customHeaderData
+            ...this.options?.customHeaderData,
         };
 
         return this._generateLine(headerData, this.schemas[headerData.type]);
@@ -192,11 +196,11 @@ class ABA {
         return {
             type: "7",
             bsb: "999999",
-            netTotal: (difference(credit, debit)),
-            creditTotal: (credit),
-            debitTotal: (debit),
+            netTotal: difference(credit, debit),
+            creditTotal: credit,
+            debitTotal: debit,
             numberOfTransactions: transactions.length,
-            ...this.options?.customFooterData
+            ...this.options?.customFooterData,
         };
     }
 }
@@ -206,7 +210,6 @@ ABA.PAYMENT_DEFAULTS = {
     taxAmount: 0,
     transactionType: "1",
 };
-
 
 ABA.CREDIT = 50;
 ABA.DEBIT = 13;
