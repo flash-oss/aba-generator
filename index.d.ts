@@ -18,6 +18,9 @@ declare module "aba-generator" {
         description: string; // Description of this file entries. Up to 12 chars.
         date?: Date | string | number; // Date to be processed.
         time?: Date | string | number; // Time to be processed. Should be ignored according to the specs.
+        schemas?: { [key in RecordTypeNumber]?: RecordSchema };
+        customHeaderData?: { [x: string]: string | number | Date };
+        customFooterData?: { [x: string]: string | number | Date };
     }
 
     interface Transaction {
@@ -32,6 +35,17 @@ declare module "aba-generator" {
         traceAccount: string; // The transacting account number
         remitter: string; // The transacting company name.
         taxAmount?: number;
+        // for custom fields
+        [x: string]: string | number | Date;
+    }
+
+    type RecordTypeNumber = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+
+    type RecordType = "header" | "transaction" | "footer";
+
+    interface RecordSchema {
+        recordType: RecordType;
+        fields: { name: string; boundaries: number[]; type: string }[];
     }
 
     export = ABA;
