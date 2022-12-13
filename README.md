@@ -177,8 +177,7 @@ Otherwise, you can provide final data manually using `customFooterData`
 
 ```js
 const customSchemas = {
-  // prettier-ignore
-  "5": {
+  5: {
     recordType: "transaction",
     fields: [
       { name: "transactionType", boundaries: [0, 1], type: "string" }, // must be 5, same as schema number N
@@ -196,8 +195,7 @@ const customSchemas = {
     ],
   },
 
-  // prettier-ignore
-  "6": {
+  6: {
     recordType: "header",
     fields: [
       { name: "type", boundaries: [0, 1], type: "string" }, // must be 6, same as schema number N
@@ -222,8 +220,7 @@ Here the list of standard schemas, you can rewrite them with custom types by usi
 
 ```js
 const defaultAbaSchemas = {
-  // prettier-ignore
-  "0": {
+  0: {
     recordType: "header",
     fields: [
       { name: "type", boundaries: [0, 1], type: "string" },
@@ -245,8 +242,7 @@ const defaultAbaSchemas = {
     ],
   },
 
-  // prettier-ignore
-  "1": {
+  1: {
     recordType: "transaction",
     fields: [
       { name: "transactionType", boundaries: [0, 1], type: "string" },
@@ -279,8 +275,7 @@ const defaultAbaSchemas = {
     ],
   },
 
-  // prettier-ignore
-  "7": {
+  7: {
     recordType: "footer",
     fields: [
       { name: "type", boundaries: [0, 1], type: "string" },

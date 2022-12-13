@@ -1,6 +1,5 @@
 const defaultAbaSchemas = {
-    // prettier-ignore
-    "0": {
+    0: {
         recordType: "header",
         fields: [
             { name: "type", boundaries: [0, 1], type: "string" },
@@ -16,8 +15,8 @@ const defaultAbaSchemas = {
             { name: "filler", boundaries: [84, 120], type: "string" }, // filler to match 120 char line size
         ],
     },
-    // prettier-ignore
-    "1": {
+
+    1: {
         recordType: "transaction",
         fields: [
             { name: "transactionType", boundaries: [0, 1], type: "string" },
@@ -34,8 +33,8 @@ const defaultAbaSchemas = {
             { name: "taxAmount", boundaries: [112, 120], type: "money" },
         ],
     },
-    // prettier-ignore
-    "7": {
+
+    7: {
         recordType: "footer",
         fields: [
             { name: "type", boundaries: [0, 1], type: "string" },
