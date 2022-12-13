@@ -307,4 +307,4 @@ Transactions schema. Most of the params are required as you can see.
 
 The module is based on this excellent work: https://github.com/ordermentum/aba
 
-Changes: removed `Bignumber.js` and `moment` dependencies, added documentation and examples, simplified code infrastructure, fixed few bugs, implement max length limit of variable data fields.
+Changes: removed all runtime dependencies, added documentation and examples, simplified code infrastructure, fixed few bugs, added features.
