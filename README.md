@@ -272,9 +272,10 @@ In the end your code can look like this
 
 ```js
 const { ABA } = require("aba-generator");
-const options = { header, schemas: { customSchema, customSchema } };
-const aba = new ABA(options);
-const batch = aba.generate([transactions]);
+
+const aba = new ABA({ header, schemas: { customSchema } });
+
+const batch = aba.generate(transactions);
 ```
 
 ### .generate(transactions)
