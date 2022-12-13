@@ -9,7 +9,8 @@ Notable:
 
 ### Changes from previous version:
 
-- **Breaking changes:** All data for Descriptive Record (Record Type = 0) is now located in `options: { header: headerData }`, previously was `options: {...headerData}`
+- **Breaking changes:**
+- Between 1.0 -> 2.0: All data for Descriptive Record (Record Type = 0) is now located in `options: { header: headerData }`, previously was `options: {...headerData}`
 - Added support of non-standard ABA files.
 
 ## Usage
