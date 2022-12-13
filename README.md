@@ -4,13 +4,13 @@ Generate ABA Files from Node.js and browser.
 
 Notable:
 
-- The minified version of this module is 10.0KB. No dependencies.
+- The minified version of this module is 4.2kb. No dependencies.
 - The source code of `aba-generator` is quite easy to read, understand, and amend. We welcome any changes.
 
 ### Changes from previous version:
 
 - **Breaking changes:** All data for Descriptive Record (Record Type = 0) is now located in `options: { header: headerData }`, previously was `options: {...headerData}`
-- Support for the generation of modified ABA files has been added.
+- Added support of non-standard ABA files.
 
 ## Usage
 
