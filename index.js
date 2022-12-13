@@ -1,5 +1,6 @@
 const defaultAbaSchemas = {
-    0: {
+    // prettier-ignore
+    "0": {
         recordType: "header",
         fields: [
             { name: "type", boundaries: [0, 1], type: "string" },
@@ -15,7 +16,8 @@ const defaultAbaSchemas = {
             { name: "filler", boundaries: [84, 120], type: "string" }, // filler to match 120 char line size
         ],
     },
-    1: {
+    // prettier-ignore
+    "1": {
         recordType: "transaction",
         fields: [
             { name: "transactionType", boundaries: [0, 1], type: "string" },
@@ -32,8 +34,8 @@ const defaultAbaSchemas = {
             { name: "taxAmount", boundaries: [112, 120], type: "money" },
         ],
     },
-
-    7: {
+    // prettier-ignore
+    "7": {
         recordType: "footer",
         fields: [
             { name: "type", boundaries: [0, 1], type: "string" },
@@ -73,11 +75,11 @@ function reformatFieldType(fieldData, field) {
     }
 
     if (field.type === "bsb") {
-        // no expand need
+        // no expand needed
         return formatBsb(fieldData).padStart(fieldLength, " ").substring(0, fieldLength);
     }
 
-    return String(fieldData).padStart(fieldLength, " ").substring(0, fieldLength);
+    return fieldData.padStart(fieldLength, " ").substring(0, fieldLength);
 }
 
 const toCents = (number = 0) => (Number(number) * 100).toFixed(0);

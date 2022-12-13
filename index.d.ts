@@ -10,15 +10,30 @@ declare module "aba-generator" {
     }
 
     interface AbaOptions {
-        bsb?: string; // Main account BSB. Should be ignored according to the specs.
-        account?: string; // Main account number. Up to 9 chars. Should be ignored according to the specs.
-        bank: string; // Name of financial institution processing this file. 3 characters, like "ANZ", "WBC"
-        user: string; // How the user will be shown in the transactions of the third party banks.
-        userNumber: number; // The ID of the user supplying the file.
-        description: string; // Description of this file entries. Up to 12 chars.
-        date?: Date | string | number; // Date to be processed.
-        time?: Date | string | number; // Time to be processed. Should be ignored according to the specs.
+        header?: {
+            type: RecordTypeNumber; // Default is "0"
+            bsb?: string; // Main account BSB. Should be ignored according to the specs.
+            account?: string; // Main account number. Up to 9 chars. Should be ignored according to the specs.
+            bank?: string; // Name of financial institution processing this file. 3 characters, like "ANZ", "WBC"
+            user?: string; // How the user will be shown in the transactions of the third party banks.
+            userNumber?: number; // The ID of the user supplying the file.
+            description?: string; // Description of this file entries. Up to 12 chars.
+            date?: Date | string | number; // Date to be processed.
+            time?: Date | string | number; // Time to be processed. Should be ignored according to the specs.
+            // for custom fields
+            [x: string]: string | number | Date;
+        };
         schemas?: { [key in RecordTypeNumber]?: RecordSchema };
+        footer?: {
+            type: RecordTypeNumber; // Default = "7" This is an auto-generated field. But you can override it with anything.
+            bsb: string; // Default = "999999" This is an auto-generated field. But you can override it with anything.
+            netTotal: string; // This is an auto-generated field. But you can override it with anything.
+            creditTotal: string; // This is an auto-generated field. But you can override it with anything.
+            debitTotal: string; // This is auto-generated field. But you can override it with anything.
+            numberOfTransactions: string; // This is an auto-generated field. But you can override it with anything.
+            // for custom fields
+            [x: string]: string | number | Date;
+        };
     }
 
     interface Transaction {

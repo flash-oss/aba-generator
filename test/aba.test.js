@@ -64,7 +64,8 @@ describe("ABA", () => {
                     time: new Date("2014-07-05T00:08:00.000Z"),
                 },
                 schemas: {
-                    2: {
+                    // prettier-ignore
+                    "2": {
                         recordType: "transaction",
                         fields: [
                             { name: "transactionType", boundaries: [0, 1], type: "string" },

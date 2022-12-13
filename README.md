@@ -117,9 +117,8 @@ You can add multiple custom schemas or replace default schemas to generate non-s
 #### Keys description
 
 `N` - is a string key with one character, that represents the first character in the ABA record,
-for default schemas ("0" - Descriptive Record (header), "1" - Detail Record (transaction), and "7" - File Total Record (footer))
-
-`type` - same as `N`
+for default schemas ("0" - Descriptive Record (header), "1" - Detail Record (transaction), and "7" - File Total Record (footer)).
+Keep in mind that all ABA strings begin with this number and that the field `name: "type"` in the provided data and custom schema must be the same as `N` in the schema.
 
 `recordType` - a string that identifies the batch's record type.
 Descriptive Record -> header; Detail Record -> transaction; File Total Record -> footer
@@ -178,10 +177,11 @@ Otherwise, you can provide final data manually using `customFooterData`
 
 ```js
 const customSchemas = {
-  5: {
+  // prettier-ignore
+  "5": {
     recordType: "transaction",
     fields: [
-      { name: "transactionType", boundaries: [0, 1], type: "string" },
+      { name: "transactionType", boundaries: [0, 1], type: "string" }, // must be 5, same as schema number N
       { name: "bsb", boundaries: [1, 8], type: "bsb" },
       { name: "account", boundaries: [8, 17], type: "string" },
       { name: "transactionCode", boundaries: [18, 20], type: "integer" },
@@ -195,10 +195,12 @@ const customSchemas = {
       { name: "customMoney", boundaries: [165, 170], type: "money" },
     ],
   },
-  6: {
+
+  // prettier-ignore
+  "6": {
     recordType: "header",
     fields: [
-      { name: "type", boundaries: [0, 1], type: "string" },
+      { name: "type", boundaries: [0, 1], type: "string" }, // must be 6, same as schema number N
       { name: "bsb", boundaries: [1, 8], type: "bsb" },
       { name: "account", boundaries: [8, 17], type: "string" },
       { name: "custom", boundaries: [145, 150], type: "" },
@@ -207,7 +209,7 @@ const customSchemas = {
 };
 
 const aba = new ABA({
-  header: { type: "6", custom: "any", bsb: "123456", account: "12345678" },
+  header: { type: "6", custom: "any", bsb: "123456", account: "12345678" }, // field "type" is requred
   schemas: customSchemas,
 });
 
@@ -220,7 +222,8 @@ Here the list of standard schemas, you can rewrite them with custom types by usi
 
 ```js
 const defaultAbaSchemas = {
-  0: {
+  // prettier-ignore
+  "0": {
     recordType: "header",
     fields: [
       { name: "type", boundaries: [0, 1], type: "string" },
@@ -241,7 +244,9 @@ const defaultAbaSchemas = {
       { name: "filler", boundaries: [84, 120], type: "string" }, // filler to match 120 char line size
     ],
   },
-  1: {
+
+  // prettier-ignore
+  "1": {
     recordType: "transaction",
     fields: [
       { name: "transactionType", boundaries: [0, 1], type: "string" },
@@ -274,7 +279,8 @@ const defaultAbaSchemas = {
     ],
   },
 
-  7: {
+  // prettier-ignore
+  "7": {
     recordType: "footer",
     fields: [
       { name: "type", boundaries: [0, 1], type: "string" },
