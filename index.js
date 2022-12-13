@@ -116,8 +116,7 @@ class ABA {
 
      */
     constructor(options) {
-        this.schemas = defaultAbaSchemas;
-        this.schemas = Object.assign(this.schemas, options?.schemas);
+        this.schemas = { ...defaultAbaSchemas, ...options?.schemas };
         this.options = {
             header: { ...ABA.HEADER_DEFAULTS, ...options?.header },
             footer: { ...ABA.FOOTER_DEFAULTS, ...options?.footer },
