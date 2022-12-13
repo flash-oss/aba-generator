@@ -7,10 +7,9 @@ Notable:
 - The minified version of this module is 4.2kb. No dependencies.
 - The source code of `aba-generator` is quite easy to read, understand, and amend. We welcome any changes.
 
-### Changes from previous version:
+## Changes between v1 and v2
 
-- **Breaking changes:**
-- Between 1.0 -> 2.0: All data for Descriptive Record (Record Type = 0) is now located in `options: { header: headerData }`, previously was `options: {...headerData}`
+- **BREAKING**: header options were `options: { ...headerData }`, become `options: { header: headerData }`.
 - Added support of non-standard ABA files.
 
 ## Usage
@@ -37,7 +36,7 @@ const aba = new ABA({
     // bsb: String, // Main account BSB. Not in the ABA spec, but required by most banks
     // account: String, // Main account number. Not in the ABA spec, but required by most banks
     // date: Date|String|Number, // The date to be processed, default is now. If string must be DDMMYY format
-    // time: Date|String|Number, // The time to be processed. Not in the ABA spec, but required by ANZ. If string must be HHmm format
+    // time: Date|String|Number, // The time to be processed. Not in the ABA spec, but required by most banks. If string must be HHmm format
   },
 });
 
@@ -68,7 +67,7 @@ Should print:
 ```
 0                 01ANZ       Allowasa Pertolio Accounti001234Credits Of T180320
 1061-021   123456 500000001200Georgian Council of New South WaInvoice # 1234    061-123  1234567Acme Inc        00000000
-7999-999            000000120000000012000000000000                        000001
+7999-999            000000120000000012000000000000                        000001                                        
 ```
 
 which is a fully valid ABA file. Note spaces in the end of the first and last lines.
