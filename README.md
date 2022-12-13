@@ -171,8 +171,6 @@ fields: [
 ];
 ```
 
-Otherwise, you can provide final data manually using `customFooterData`
-
 ### Custom schema use example
 
 ```js
