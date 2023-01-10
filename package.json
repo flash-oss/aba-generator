@@ -1,6 +1,6 @@
 {
   "name": "aba-generator",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "ABA file generator",
   "main": "index.js",
   "types": "./index.d.ts",
