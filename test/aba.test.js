@@ -318,20 +318,31 @@ describe("ABA", () => {
                 remitter: "Vault",
             };
 
-            const creditA = { ...defaults, amount: 1337.42, transactionCode: 50 };
-            const creditB = { ...defaults, amount: 512.64, transactionCode: 50 };
-            const debitA = { ...defaults, amount: 666.69, transactionCode: 13 };
-            const debitB = { ...defaults, amount: 616.66, transactionCode: 13 };
-            const payments = [creditA, debitA, creditB, debitB];
+
+
+            const payments = [
+                { ...defaults, amount: 1337.42, transactionCode: 50 }, //credit 1
+                { ...defaults, amount: 1.01, transactionCode: 51 }, //credit 2
+                { ...defaults, amount: 1.01, transactionCode: 52 }, //credit 3
+                { ...defaults, amount: 1.01, transactionCode: 53 }, //credit 4
+                { ...defaults, amount: 1.01, transactionCode: 54 }, //credit 5
+                { ...defaults, amount: 1.01, transactionCode: 55 }, //credit 6
+                { ...defaults, amount: 1.01, transactionCode: 56 }, //credit 7
+                { ...defaults, amount: 1.01, transactionCode: 57 }, //credit 8
+                { ...defaults, amount: 666.69, transactionCode: 13 }, //debit 1
+                { ...defaults, amount: 512.64, transactionCode: 50 }, //credit 9
+                { ...defaults, amount: 616.66, transactionCode: 13 }, // debit 2
+            ];
 
             let footer = [
-                "0000056671", // Credit minus debit total
-                "0000185006", // Credit total
+                "0000057378", // Credit minus debit total
+                "0000185713", // Credit total
                 "0000128335", // Debit total
             ].join("");
 
             const rows = aba.generate(payments).split(/\r\n/);
-            assert.equal(rows[5].substr(20, 30), footer);
+
+            assert.equal(rows[rows.length-1].substr(20, 30), footer);
         });
 
         it("must return a negative net as positive", () => {

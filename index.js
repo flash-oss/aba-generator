@@ -197,7 +197,7 @@ class ABA {
      * @private
      */
     formatFooter(transactions) {
-        const credits = transactions.filter((p) => p.transactionCode === ABA.CREDIT || p.transactionCode === ABA.PAY);
+        const credits = transactions.filter((p) =>  p.transactionCode >= 50 && p.transactionCode <= 57);
         const debits = transactions.filter((p) => p.transactionCode === ABA.DEBIT);
         const credit = sum(credits.map((c) => c.amount));
         const debit = sum(debits.map((d) => d.amount));
